@@ -10,9 +10,6 @@ function signMessage(_message) {
 	const signature = wallet.signMessage(_message)
 
 	// https://docs.ethers.io/ethers.js/html/cookbook.html#break-apart-r-s-and-v-from-a-message-signature
-	// Split apart the signature into an r, s and v that can be used by
-	// ecrecover in Solidity. The v parameter will be normalized to the
-	// canonical value of 27 or 28.
 	const signedMessage = ethers.utils.splitSignature(signature)
 
 	// https://docs.ethers.io/ethers.js/html/api-utils.html?highlight=sha3#cryptographic-functions
@@ -23,5 +20,14 @@ function signMessage(_message) {
 	signedMessage.hashedMessage = hashedMessage
 	signedMessage.address = wallet.address
 
+	/*
+	signedMessage = { 
+		r: '0x0079d91efaa7ca55074617a2c255a8855bc278a3e0ca1b837f60ce000109ef85',
+		s: '0x40960e193be95e38fb2f5307ca0c20108fcc420ff49e48b9a8cb11d9074deb46',
+		v: 27,
+		hashedMessage: '0x50b2c43fd39106bafbba0da34fc430e1f91e3c96ea2acee2bc34119f92b37750',
+		address: '0x14791697260E4c9A71f18484C9f997B308e59325' 
+	}
+	*/
 	return signedMessage
 }
