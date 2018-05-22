@@ -1,7 +1,9 @@
 // https://docs.ethers.io/ethers.js/html/api-wallet.html
 const ethers = require('ethers');
 
-// signMessage('hello')
+const signedMessage = signMessage('hello')
+console.log(signedMessage)
+
 function signMessage(_message) {
 	const privateKey = '0x0123456789012345678901234567890123456789012345678901234567890123'
 	const wallet = new ethers.Wallet(privateKey)
@@ -21,8 +23,5 @@ function signMessage(_message) {
 	signedMessage.hashedMessage = hashedMessage
 	signedMessage.address = wallet.address
 
-	console.log(signedMessage)
 	return signedMessage
 }
-
-module.exports = {signMessage}
