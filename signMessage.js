@@ -1,7 +1,7 @@
 // https://docs.ethers.io/ethers.js/html/api-wallet.html
 const ethers = require('ethers');
 
-const signedMessage = signMessage('hello')
+const signedMessage = signMessage((123).toString(16))
 console.log(signedMessage)
 
 function signMessage(_message) {
@@ -15,7 +15,8 @@ function signMessage(_message) {
 	// https://docs.ethers.io/ethers.js/html/api-utils.html?highlight=sha3#cryptographic-functions
 	// https://github.com/trufflesuite/ganache-cli/issues/243
 	const utf8BytesMessage = ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n' + _message.length + _message)
-	const hashedMessage = ethers.utils.keccak256(utf8BytesMessage)
+	const hashedMessage = ethers.utils.keccak256('0xec5bee2dbb67da8757091ad3d9526ba3ed2e2137', utf8BytesMessage)
+
 
 	signedMessage.hashedMessage = hashedMessage
 	signedMessage.address = wallet.address
