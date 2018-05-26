@@ -1,24 +1,39 @@
-// https://docs.ethers.io/ethers.js/html/api-wallet.html
-// if proof === hashedMessage
+/*
+	// https://ethereum.stackexchange.com/a/15911
+	pragma solidity ^0.4.0;
 
+	contract test {
+	  function verifyMessage(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) constant returns (address) {
+	    address signer = ecrecover(_hashedMessage, _v, _r, _s);
+	    return signer;
+	  }
+	}
+*/
 const ethers = require('ethers');
 
-const signedMessage = signMessage('123', '0xd04a9b31144d28e3a36c4ebcb99b9c79763f71f0')
+const signedMessage = signMessage('123')
 console.log(signedMessage)
 
-function signMessage(_value, _contractAddress) {
+function signMessage(_message) {
 	const privateKey = '0x0123456789012345678901234567890123456789012345678901234567890123'
 	const wallet = new ethers.Wallet(privateKey)
 	const address = wallet.address
 
-	const proof = ethers.utils.solidityKeccak256(['address', 'int' ], [_contractAddress, _value])
+	const signature = wallet.signMessage(_message)
+	// https://docs.ethers.io/ethers.js/html/cookbook.html#break-apart-r-s-and-v-from-a-message-signature
+	const {r, s, v} = ethers.utils.splitSignature(signature)
 
-	const utf8BytesMessage = ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n' + proof.length + proof)
-	const hashedMessage = ethers.utils.keccak256(utf8BytesMessage)
+	// https://github.com/trufflesuite/ganache-cli/issues/243
+	const utf8BytesMessage = ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n' + _message.length + _message)
+	const proof = ethers.utils.keccak256(utf8BytesMessage)
 
-	const signedMessage = wallet.signMessage(hashedMessage)
-	const VRS = ethers.utils.splitSignature(signedMessage)
-
-
-	return { VRS, address, proof, hashedMessage }
+	return {r, s, v, proof, address}
 }
+
+
+
+//const proof = ethers.utils.solidityKeccak256(['address', 'int' ], [_contractAddress, _value])
+
+
+
+
