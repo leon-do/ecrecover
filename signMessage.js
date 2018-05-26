@@ -11,7 +11,7 @@
 */
 const ethers = require('ethers');
 
-const signedMessage = signMessage('123')
+const signedMessage = signMessage('hello')
 console.log(signedMessage)
 
 function signMessage(_message) {
@@ -19,20 +19,19 @@ function signMessage(_message) {
 	const wallet = new ethers.Wallet(privateKey)
 	const address = wallet.address
 
-	const signature = wallet.signMessage(_message)
-	// https://docs.ethers.io/ethers.js/html/cookbook.html#break-apart-r-s-and-v-from-a-message-signature
-	const {r, s, v} = ethers.utils.splitSignature(signature)
-
 	// https://github.com/trufflesuite/ganache-cli/issues/243
 	const utf8BytesMessage = ethers.utils.toUtf8Bytes('\x19Ethereum Signed Message:\n' + _message.length + _message)
 	const proof = ethers.utils.keccak256(utf8BytesMessage)
+
+	const signature = wallet.signMessage(_message)
+	// https://docs.ethers.io/ethers.js/html/cookbook.html#break-apart-r-s-and-v-from-a-message-signature
+	const {r, s, v} = ethers.utils.splitSignature(signature)
 
 	return {r, s, v, proof, address}
 }
 
 
 
-//const proof = ethers.utils.solidityKeccak256(['address', 'int' ], [_contractAddress, _value])
 
 
 
