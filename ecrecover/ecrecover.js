@@ -11,26 +11,22 @@
 */
 const ethers = require('ethers')
 
-const signedMessage = signMessage(123)
+const signedMessage = signMessage('0xdc04977a2078c8ffdf086d618d1f961b6c546222' ,123)
 console.log(signedMessage)
 
-function signMessage(_message) {
+function signMessage(_contract, _value) {
     const privateKey = '0x0123456789012345678901234567890123456789012345678901234567890123'
     const signingKey = new ethers.SigningKey(privateKey);
     const address = signingKey.address
 
-    const prefix = "\x19Ethereum Signed Message:\n32";
-    const msgBytes = ethers.utils.toUtf8Bytes(_message);
-    const msgDigest = ethers.utils.keccak256(msgBytes);
+    // hash message
+    const h = ethers.utils.solidityKeccak256(['address', 'int'], [_contract, _value]);
 
-    const h = ethers.utils.solidityKeccak256(['string', 'bytes32'], [prefix, msgDigest]);
+    // sign and split message: https://github.com/ethers-io/ethers.js/issues/85
+    const {r, s, recoveryParam} = signingKey.signDigest(h);
+    const v = 27 + recoveryParam
 
-  const {r, s, recoveryParam} = signingKey.signDigest(h);
-
-  const v = 27 + recoveryParam
-
-  return { h, v, r, s, address}
-
+    return { h, v, r, s, address}
 }
 
 
