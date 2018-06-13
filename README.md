@@ -1,3 +1,3 @@
-### ecrecover using ethers
+### Ecrecover Using Ethers
 ![alt text](img.png)
 
