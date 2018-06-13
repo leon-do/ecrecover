@@ -26,7 +26,7 @@ function signMessage(_contract, _value) {
     const {r, s, recoveryParam} = signingKey.signDigest(h);
     const v = 27 + recoveryParam
 
-    return { h, v, r, s, address}
+    return { h, v, r, s, address }
 }
 
 
