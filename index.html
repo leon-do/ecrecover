@@ -2,7 +2,7 @@
 
 <style>
     body {
-        background-color:cornsilk
+        background-color: cornsilk
     }
 </style>
 
@@ -29,23 +29,23 @@
 <script src="https://cdn.ethers.io/scripts/ethers-v3.min.js"></script>
 <script>
 
-function signMessage() {
-    const message = document.getElementById('msg').value
-	const privateKey = document.getElementById('pKey').value
-    const signingKey = new ethers.SigningKey(privateKey);
-    const address = signingKey.address
+    function signMessage() {
+        const message = document.getElementById('msg').value
+        const privateKey = document.getElementById('pKey').value
+        const signingKey = new ethers.SigningKey(privateKey);
+        const address = signingKey.address
 
-    // https://docs.ethers.io/ethers.js/html/api-utils.html?highlight=keccak256
-    const h = ethers.utils.solidityKeccak256(['string'], [message]);
+        // https://docs.ethers.io/ethers.js/html/api-utils.html?highlight=keccak256
+        const h = ethers.utils.solidityKeccak256(['string'], [message]);
 
-    // sign and split message: https://github.com/ethers-io/ethers.js/issues/85
-    const {r, s, recoveryParam} = signingKey.signDigest(h);
-    const v = 27 + recoveryParam
+        // sign and split message: https://github.com/ethers-io/ethers.js/issues/85
+        const { r, s, recoveryParam } = signingKey.signDigest(h);
+        const v = 27 + recoveryParam
 
-    console.log({ h, v, r, s, address})
-    document.getElementById('signedMsg').innerHTML = JSON.stringify({h,v,r,s, address}, null, 4)
-}
-   
+        console.log({ h, v, r, s, address })
+        document.getElementById('signedMsg').innerHTML = JSON.stringify({ h, v, r, s, address }, null, 4)
+    }
+
 </script>
 
 </html>
