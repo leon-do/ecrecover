@@ -1,51 +1,61 @@
-<html>
-
 <style>
-    body {
-        background-color: cornsilk
-    }
+  body {
+    background-color: cornsilk;
+  }
 </style>
 
-<body>
-    <pre>
+<pre>
 
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-        Private Key:<input id="pKey" value="0x0123456789012345678901234567890123456789012345678901234567890123">
-        Message:<input id="msg" value="hello">
-        <button onclick="signMessage('hello')">Sign Message</button>
+contract Verify {
 
-        <div id="signedMsg"></div>
-
-    pragma solidity ^0.4.0;
-        contract testEcrecover {
-            function verifyMessage(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) constant returns (address) {
-            address signer = ecrecover(_hashedMessage, _v, _r, _s);
-            return signer;
-        }
+    function VerifyMessage(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) public pure returns (address) {
+        bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+        bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+        address signer = ecrecover(prefixedHashMessage, _v, _r, _s);
+        return signer;
     }
-    </pre>
-</body>
 
-<script src="https://cdn.ethers.io/scripts/ethers-v3.min.js"></script>
+}
+
+</pre>
+
+<button onClick="signMessage()">Sign Message</button>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js"
+  integrity="sha512-/PTXSvaFzmO4So7Ghyq+DEZOz0sNLU4v1DP4gMOfY3kFu9L/IKoqSHZ6lNl3ZoZ7wT20io3vu/U4IchGcGIhfw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
 <script>
+  async function signMessage() {
+    if (!window.ethereum) return alert("Please Install Metamask");
 
-    function signMessage() {
-        const message = document.getElementById('msg').value
-        const privateKey = document.getElementById('pKey').value
-        const signingKey = new ethers.SigningKey(privateKey);
-        const address = signingKey.address
+    // connect and get metamask account
+    const accounts = await ethereum.request({ method: "eth_requestAccounts" });
 
-        // https://docs.ethers.io/ethers.js/html/api-utils.html?highlight=keccak256
-        const h = ethers.utils.solidityKeccak256(['string'], [message]);
+    // message to sign
+    const message = "hello";
+    console.log({ message });
 
-        // sign and split message: https://github.com/ethers-io/ethers.js/issues/85
-        const { r, s, recoveryParam } = signingKey.signDigest(h);
-        const v = 27 + recoveryParam
+    // hash message
+    const hashedMessage = Web3.utils.sha3(message);
+    console.log({ hashedMessage });
 
-        console.log({ h, v, r, s, address })
-        document.getElementById('signedMsg').innerHTML = JSON.stringify({ h, v, r, s, address }, null, 4)
-    }
+    // sign hashed message
+    const signature = await ethereum.request({
+      method: "personal_sign",
+      params: [hashedMessage, accounts[0]],
+    });
+    console.log({ signature });
 
+    // split signature
+    const r = signature.slice(0, 66);
+    const s = "0x" + signature.slice(66, 130);
+    const v = parseInt(signature.slice(130, 132), 16);
+    console.log({ r, s, v });
+  }
 </script>
-
-</html>
